@@ -5,6 +5,9 @@ import { app, BrowserWindow, ipcMain, nativeTheme } from "electron";
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
+import path from "path";
+import fse from "fs-extra";
+
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
   app.quit();
@@ -13,8 +16,8 @@ if (require("electron-squirrel-startup")) {
 const createWindow = (): void => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    height: 600,
-    width: 800,
+    height: 400,
+    width: 600,
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
@@ -32,17 +35,12 @@ const createWindow = (): void => {
 // Some APIs can only be used after this event occurs.
 app.on("ready", createWindow);
 
-ipcMain.handle("dark-mode:toggle", () => {
-  if (nativeTheme.shouldUseDarkColors) {
-    nativeTheme.themeSource = "light";
-  } else {
-    nativeTheme.themeSource = "dark";
-  }
-  return nativeTheme.shouldUseDarkColors;
-});
-
-ipcMain.handle("dark-mode:system", () => {
-  nativeTheme.themeSource = "system";
+ipcMain.handle("image:read", (event, srcPath:string) => {
+  const rootPath = __dirname.replace("/.webpack/main","");
+  const readPath = path.join(rootPath, srcPath);
+  const image = fse.readFileSync(readPath);
+  const encodedImage = image.toString("base64");
+  return encodedImage;
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common

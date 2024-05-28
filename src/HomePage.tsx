@@ -1,40 +1,41 @@
 import { useState } from "react";
 
+// ui
+import FileInput from "./ui/FileInput";
+import Textarea from "./ui/Textarea";
+
 interface Window {
-  darkMode: {
-    toggle: () => boolean;
-    system: () => void;
-  }
+  image: {
+    read: (srcPath: string) => string;
+  };
 }
 declare var window: Window;
 
 export default function HomePage() {
-  const [mode, setMode] = useState("");
+  const [logo, setLogo] = useState("");
 
-  async function toggleDarkMode() {
-    const isDarkMode = await window.darkMode.toggle();
-    const isMode = isDarkMode ? "Dark" : "Light";
-    setMode(isMode);
+  async function readLogo() {
+    const encodedImage = await window.image.read("/public/images/logo.png");
+    setLogo(encodedImage);
   }
-
-  async function resetToSystem() {
-    await window.darkMode.system();
-    setMode("System");
-  }
+  readLogo();
 
   return (
     <div>
-      <h1 className="bg-slate-700">Hello World!</h1>
-      <p>
-        Current theme source: <strong id="theme-source">{mode}</strong>
+      {/* logo */}
+      <p className="mt-8">
+        <img className="mx-auto my-0" src={`data:image/jpg;base64,${logo}`} />
       </p>
-
-      <button id="toggle-dark-mode" onClick={toggleDarkMode}>
-        Toggle Dark Mode
-      </button>
-      <button id="reset-to-system" onClick={resetToSystem}>
-        Reset to System Theme
-      </button>
+      <form action="/" className="mt-8 px-8">
+        <FileInput label="抽出元" name="source" />
+        <FileInput label="抽出先" name="destination" />
+        <Textarea label="抽出したいファイル／フォルダ" name="extract" />
+        <div className="mt-6 text-center">
+          <button className="transition border border-black bg-black text-white px-3 py-1 hover:bg-neutral-700">
+            抽出する
+          </button>
+        </div>
+      </form>
     </div>
   );
 }
