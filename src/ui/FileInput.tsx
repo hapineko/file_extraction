@@ -12,7 +12,7 @@ export default function FileInput(props: any) {
         {label}
       </label>
       <input
-        className="border border-black p-1 w-5/6"
+        className="border border-black p-1 w-4/5"
         type="text"
         name={name}
         id={name}

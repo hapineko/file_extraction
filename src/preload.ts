@@ -4,5 +4,5 @@
 const { contextBridge, ipcRenderer } = require("electron/renderer");
 
 contextBridge.exposeInMainWorld("image", {
-  read: () => ipcRenderer.invoke("image:read"),
+  read: (srcPath:string) => ipcRenderer.invoke("image:read", srcPath),
 });
