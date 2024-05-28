@@ -20,6 +20,8 @@ export default function HomePage() {
   }
   readLogo();
 
+  // 「抽出する」ボタンに大してコピー処理用APIを紐づける
+
   return (
     <div>
       {/* logo */}
