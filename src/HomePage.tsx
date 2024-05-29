@@ -23,7 +23,7 @@ export default function HomePage() {
   // 「抽出する」ボタンに大してコピー処理用APIを紐づける
 
   return (
-    <div>
+    <div className="mb-8">
       {/* logo */}
       <p className="mt-8">
         <img className="mx-auto my-0" src={`data:image/jpg;base64,${logo}`} />

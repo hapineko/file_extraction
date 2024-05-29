@@ -9,6 +9,8 @@ export default function Textarea(props: any) {
         name={name}
         id={name}
         rows={5}
+        required
+        placeholder="/test/index.html"
       ></textarea>
     </div>
   );
