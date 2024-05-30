@@ -8,3 +8,10 @@ contextBridge.exposeInMainWorld("image", {
 });
 
 // copySyncでのコピー処理用APIの定義を書く
+contextBridge.exposeInMainWorld("extraction", {
+  copy: (data:{
+    source: string;
+    destination: string;
+    extract: string[];
+  }) => ipcRenderer.invoke("extraction:copy", data),
+});

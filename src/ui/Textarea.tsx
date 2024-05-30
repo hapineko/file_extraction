@@ -1,5 +1,5 @@
 export default function Textarea(props: any) {
-  const { label, name } = props;
+  const { label, name, register } = props;
 
   return (
     <div className="mt-4">
@@ -11,6 +11,7 @@ export default function Textarea(props: any) {
         rows={5}
         required
         placeholder="/test/index.html"
+        {...register(name)}
       ></textarea>
     </div>
   );

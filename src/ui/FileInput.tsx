@@ -1,9 +1,7 @@
 import { useState } from "react";
 
 export default function FileInput(props: any) {
-  const { label, name } = props;
-
-  const [inputTextValue, setInputTextValue] = useState("");
+  const { label, name, register, setValue } = props;
 
   function handleClickInputFile() {
     const inputFileElm = document.querySelector<HTMLInputElement>(
@@ -20,7 +18,7 @@ export default function FileInput(props: any) {
       /(\/|\\)[^(\/|\\)]*$/,
       "$1"
     );
-    setInputTextValue(filePath);
+    setValue(name, filePath);
   }
 
   return (
@@ -33,9 +31,8 @@ export default function FileInput(props: any) {
         type="text"
         name={name}
         id={name}
-        value={inputTextValue}
-        onChange={(event) => setInputTextValue(event.target.value)}
         required
+        {...register(name)}
       />
       <button
         className="transition border border-black bg-black text-white px-3 py-1 hover:bg-neutral-700 w-1/6"

@@ -35,15 +35,47 @@ const createWindow = (): void => {
 // Some APIs can only be used after this event occurs.
 app.on("ready", createWindow);
 
-ipcMain.handle("image:read", (event, srcPath:string) => {
-  const rootPath = __dirname.replace("/.webpack/main","");
+ipcMain.handle("image:read", (event, srcPath: string) => {
+  const rootPath = __dirname.replace("/.webpack/main", "");
   const readPath = path.join(rootPath, srcPath);
   const image = fse.readFileSync(readPath);
   const encodedImage = image.toString("base64");
   return encodedImage;
 });
 
-// copySyncでのコピー処理用APIを書く
+// コピー処理用API
+ipcMain.handle(
+  "extraction:copy",
+  async (
+    event,
+    data: {
+      source: string;
+      destination: string;
+      extract: string[];
+    }
+  ) => {
+    let error = "";
+    await data.extract.forEach((extractPath) => {
+      const sourcePath = path.join(data.source, extractPath);
+      const destinationPath = path.join(data.destination, extractPath);
+      fse
+        .copy(sourcePath, destinationPath)
+        .then(() => {
+          console.log(destinationPath, "success!");
+        })
+        .catch((err) => {
+          console.error(err);
+          error += `${err}\n`;
+        });
+    });
+
+    if(error) {
+      return error;
+    } else {
+      return 'success';
+    }
+  }
+);
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
