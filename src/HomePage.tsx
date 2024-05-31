@@ -23,7 +23,10 @@ export default function HomePage() {
   const [logo, setLogo] = useState("");
   const [loading, setLoading] = useState(false);
   const [successModal, setSuccessModal] = useState(false);
-  const [errorModal, setErrorModal] = useState(true);
+  const [errorModal, setErrorModal] = useState(false);
+  const [errorLog, setErrorLog] = useState("");
+  const [sourceHistory, setSourceHistory] = useState([]);
+  const [destinationHistory, setDestinationHistory] = useState([]);
 
   // ロゴ読み込み
   async function readLogo() {
@@ -39,7 +42,6 @@ export default function HomePage() {
   }
 
   // フォーム送信時の制御
-  let errorLog = "";
   const { register, handleSubmit, setValue } = useForm<IFormInput>();
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     setLoading(true);
@@ -51,12 +53,21 @@ export default function HomePage() {
     });
     setLoading(false);
     if (result === "success") {
+      // 履歴を更新する
+      if (!sourceHistory.includes(data.source)) {
+        setSourceHistory([...sourceHistory, data.source]);
+      }
+      if (!destinationHistory.includes(data.destination)) {
+        setDestinationHistory([...destinationHistory, data.destination]);
+      }
+
+      // 抽出完了のモーダルを表示する
       setSuccessModal(true);
       setTimeout(() => {
         setSuccessModal(false);
       }, 2000);
     } else {
-      errorLog = result;
+      setErrorLog(result);
       setErrorModal(true);
     }
   };
@@ -69,17 +80,24 @@ export default function HomePage() {
       </p>
       <form className="mt-8 px-8" onSubmit={handleSubmit(onSubmit)}>
         <FileInput
-          label="抽出元"
+          label="抽出元："
           name="source"
           register={register}
           setValue={setValue}
+          history={sourceHistory}
         />
         <FileInput
-          label="抽出先"
+          label="抽出先："
           name="destination"
           register={register}
           setValue={setValue}
+          history={destinationHistory}
         />
+        <p className="mt-2 text-xs text-red-700">
+          ※MacOSの場合、空のフォルダを指定する際は直接ファイルパスを入力してください。
+          <br />
+          （OSの仕様上、「選択」から空のフォルダを選択した場合はファイルパスが取得できないため）
+        </p>
         <Textarea
           label="抽出したいファイル／フォルダ"
           name="extract"

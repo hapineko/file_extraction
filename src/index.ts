@@ -55,27 +55,54 @@ ipcMain.handle(
     }
   ) => {
     let error = "";
-    await data.extract.forEach((extractPath) => {
-      const sourcePath = path.join(data.source, extractPath);
-      const destinationPath = path.join(data.destination, extractPath);
-      fse
-        .copy(sourcePath, destinationPath)
-        .then(() => {
-          console.log(destinationPath, "success!");
-        })
-        .catch((err) => {
-          console.error(err);
-          error += `${err}\n`;
+    for (let extractPath of data.extract) {
+      try {
+        await new Promise((resolve, reject) => {
+          const sourcePath = path.join(data.source, extractPath);
+          const destinationPath = path.join(data.destination, extractPath);
+          fse
+            .copy(sourcePath, destinationPath)
+            .then(() => {
+              console.log(destinationPath, "success!");
+              resolve("");
+            })
+            .catch((err) => {
+              // console.error(err);
+              reject(err);
+            });
         });
-    });
+      } catch (err) {
+        error += err;
+      }
+    }
 
-    if(error) {
-      return error;
+    if (error === "") {
+      return "success";
     } else {
-      return 'success';
+      return error;
     }
   }
 );
+
+// 履歴読み書き用のAPIを作る
+ipcMain.handle("history:read", (event, historyPath: string) => {
+  const rootPath = __dirname.replace("/.webpack/main", "");
+  const readPath = path.join(rootPath, historyPath);
+  const history = fse.readFileSync(readPath);
+  return history;
+});
+ipcMain.handle("history:write", (event, historyPath: string, newPath:string) => {
+  const rootPath = __dirname.replace("/.webpack/main", "");
+  const targetPath = path.join(rootPath, historyPath);
+  const oldHistory = fse.readFileSync(targetPath);
+  let newHistory = "";
+  if(oldHistory) {
+    newHistory = `${oldHistory}\n${newPath}`;
+  } else {
+    newHistory += newPath;
+  }
+  fse.writeFileSync(targetPath, newHistory);
+});
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits

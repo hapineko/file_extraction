@@ -7,7 +7,6 @@ contextBridge.exposeInMainWorld("image", {
   read: (srcPath:string) => ipcRenderer.invoke("image:read", srcPath),
 });
 
-// copySyncでのコピー処理用APIの定義を書く
 contextBridge.exposeInMainWorld("extraction", {
   copy: (data:{
     source: string;
@@ -15,3 +14,5 @@ contextBridge.exposeInMainWorld("extraction", {
     extract: string[];
   }) => ipcRenderer.invoke("extraction:copy", data),
 });
+
+// 履歴読み書き用のAPIの定義を書く

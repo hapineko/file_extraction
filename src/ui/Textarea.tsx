@@ -10,7 +10,7 @@ export default function Textarea(props: any) {
         id={name}
         rows={5}
         required
-        placeholder="/test/index.html"
+        placeholder="/test1/&#13;&#10;/test2/index.html"
         {...register(name)}
       ></textarea>
     </div>
