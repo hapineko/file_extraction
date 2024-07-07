@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
+import classNames from "classnames";
 
 // ui
 import FileInput from "./ui/FileInput";
@@ -109,35 +110,41 @@ export default function HomePage() {
           </button>
         </div>
       </form>
-      {loading && (
-        <div className="absolute top-0 left-0 w-full h-full bg-black text-white opacity-50">
-          <div className="flex justify-center items-center h-full">
-            抽出中……
-          </div>
-        </div>
-      )}
-      {successModal && (
-        <div className="w-full bg-green-700 text-white p-4 text-center absolute top-1/2">
-          抽出が完了しました
-        </div>
-      )}
-      {errorModal && (
-        <div
-          className="absolute top-0 w-full h-full bg-overlay-color cursor-pointer"
-          onClick={() => {
-            setErrorModal(false);
-          }}
-        >
-          <div className="flex justify-center items-center h-full">
-            <div className="w-full">
-              <div className="w-full bg-red-700 text-white p-4 text-center">
-                抽出に失敗しました
-              </div>
-              <div className="w-full bg-white p-4">{errorLog}</div>
+      <div
+        className={classNames(
+          "invisible absolute top-0 left-0 w-full h-full bg-black text-white opacity-0 transition-all",
+          loading && "visible opacity-50"
+        )}
+      >
+        <div className="flex justify-center items-center h-full">抽出中……</div>
+      </div>
+      <div
+        className={classNames(
+          "transition-all w-full bg-green-700 text-white p-4 text-center absolute top-1/2 opacity-0",
+          !successModal && "invisible",
+          successModal && "visible opacity-100"
+        )}
+      >
+        抽出が完了しました
+      </div>
+      <div
+        className={classNames(
+          "invisible absolute top-0 w-full h-full bg-overlay-color cursor-pointer opacity-0 transition-all",
+          errorModal && "visible opacity-100"
+        )}
+        onClick={() => {
+          setErrorModal(false);
+        }}
+      >
+        <div className="flex justify-center items-center h-full">
+          <div className="w-full">
+            <div className="w-full bg-red-700 text-white p-4 text-center">
+              抽出に失敗しました
             </div>
+            <div className="w-full bg-white p-4">{errorLog}</div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

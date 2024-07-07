@@ -16,3 +16,9 @@ contextBridge.exposeInMainWorld("extraction", {
 });
 
 // 履歴読み書き用のAPIの定義を書く
+contextBridge.exposeInMainWorld("history", {
+  write: (data:{
+    source: string;
+    destination: string;
+  }) => ipcRenderer.invoke("history:write", data),
+});
